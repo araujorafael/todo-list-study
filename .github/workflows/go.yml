@@ -9,7 +9,7 @@ on:
 jobs:
 
   test:
-    name: Build
+    name: Test
     runs-on: ubuntu-latest
     steps:
 
@@ -32,4 +32,6 @@ jobs:
         fi
 
     - name: Test
-      run: go test -v .
+      run: |
+        cd backend
+        go test -v ./test/...
