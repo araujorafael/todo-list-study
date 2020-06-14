@@ -1,31 +1,20 @@
 package main
 
 import (
+	"todo-list/backend/handlers"
+	"todo-list/backend/router"
+
 	"github.com/gin-gonic/gin"
 )
 
-type PayloadTest struct {
-	Title      string `json:"title"`
-	Message    string `json:"message"`
-	BudegaMode bool   `json:"budega_mode"`
-}
-
-func pingHandler(c *gin.Context) {
-	la := PayloadTest{
-		Title:      "Some Title",
-		Message:    "Some Message",
-		BudegaMode: false,
-	}
-
-	c.JSON(200, la)
-}
-
-func router(r *gin.Engine) *gin.Engine {
-	r.GET("/ping", pingHandler)
-	return r
-}
-
+// main it's app entry point and orchestrate dependencies
 func main() {
-	server := router(gin.Default())
+	var serverConfs = gin.Default()
+
+	// instanciate handlers
+	var taskHandler = new(handlers.TaskHandlerImpl)
+	var helloExample = new(handlers.HelloExampleHandlerImpl)
+
+	server := router.BuildRouter(serverConfs, taskHandler, helloExample)
 	server.Run("0.0.0.0:3000")
 }
