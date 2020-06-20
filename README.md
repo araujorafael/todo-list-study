@@ -9,7 +9,7 @@ Just a simple todo-list
 
 #### Backend
 
-- [ ] In memory Database 
+- [x] In memory Database 
 - [ ] Task Creation endpoint
 - [ ] Task Deletion Endpoint
 - [ ] Task Get
