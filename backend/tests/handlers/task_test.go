@@ -6,7 +6,9 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"todo-list/backend/database"
 	"todo-list/backend/handlers"
+	"todo-list/backend/models"
 	"todo-list/backend/router"
 
 	"github.com/gin-gonic/gin"
@@ -14,8 +16,8 @@ import (
 )
 
 type responseJson struct {
-	Status string        `json:"status"`
-	Data   handlers.Task `json:"data"`
+	Status string      `json:"status"`
+	Data   models.Task `json:"data"`
 }
 
 func jsonToStruct(jsonStr string) responseJson {
@@ -26,8 +28,11 @@ func jsonToStruct(jsonStr string) responseJson {
 
 func TestCreateTask(t *testing.T) {
 	var serverConfs = gin.Default()
-	var taskHandler = new(handlers.TaskHandlerImpl)
+
+	db := new(database.DatabaseImpl)
+	var taskHandler = handlers.BuildTaskHandler(db)
 	var helloExample = new(handlers.HelloExampleHandlerImpl)
+
 	router := router.BuildRouter(serverConfs, taskHandler, helloExample)
 
 	payload := strings.NewReader(`{"message": "tes", "title": "title test"}`)

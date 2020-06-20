@@ -1,6 +1,7 @@
 package main
 
 import (
+	"todo-list/backend/database"
 	"todo-list/backend/handlers"
 	"todo-list/backend/router"
 
@@ -11,8 +12,10 @@ import (
 func main() {
 	var serverConfs = gin.Default()
 
+	var systemCommonDB = new(database.DatabaseImpl)
+
 	// instanciate handlers
-	var taskHandler = new(handlers.TaskHandlerImpl)
+	var taskHandler = handlers.BuildTaskHandler(systemCommonDB)
 	var helloExample = new(handlers.HelloExampleHandlerImpl)
 
 	server := router.BuildRouter(serverConfs, taskHandler, helloExample)
