@@ -20,10 +20,8 @@ type responseJson struct {
 	Data   models.Task `json:"data"`
 }
 
-func jsonToStruct(jsonStr string) responseJson {
-	var resp responseJson
-	json.Unmarshal([]byte(jsonStr), &resp)
-	return resp
+type responseListJson struct {
+	Data []models.Task `json:"data"`
 }
 
 func TestCreateTask(t *testing.T) {
@@ -41,10 +39,38 @@ func TestCreateTask(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/task", payload)
 	router.ServeHTTP(w, req)
 
-	resp := jsonToStruct(w.Body.String())
+	resp := responseJson{}
+	json.Unmarshal(w.Body.Bytes(), &resp)
 	assert.Equal(t, 201, w.Code)
 	assert.Equal(t, resp.Status, "created")
 	assert.Equal(t, resp.Data.Message, "tes")
 	assert.Equal(t, resp.Data.Title, "title test")
 	assert.NotEqual(t, resp.Data.CreatedAt, nil)
+}
+
+func TestListAllTasks(t *testing.T) {
+	var serverConfs = gin.Default()
+
+	dbMock := []models.Task{
+		{Title: "Title task 1"},
+		{Title: "Title task 2"},
+	}
+	db := database.DatabaseImpl{
+		Data: dbMock,
+	}
+
+	var taskHandler = handlers.BuildTaskHandler(&db)
+	var helloExample = new(handlers.HelloExampleHandlerImpl)
+
+	router := router.BuildRouter(serverConfs, taskHandler, helloExample)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/tasks", nil)
+	router.ServeHTTP(w, req)
+
+	var resp responseListJson
+	json.Unmarshal(w.Body.Bytes(), &resp)
+	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, 2, len(resp.Data))
+	assert.Equal(t, dbMock, resp.Data)
 }
