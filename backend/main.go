@@ -1,9 +1,11 @@
 package main
 
 import (
-	"todo-list/backend/database"
-	"todo-list/backend/handlers"
-	"todo-list/backend/router"
+	"fmt"
+
+	"todo-list-study/backend/database"
+	"todo-list-study/backend/handlers"
+	"todo-list-study/backend/router"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,13 +13,15 @@ import (
 // main it's app entry point and orchestrate dependencies
 func main() {
 	var serverConfs = gin.Default()
-
-	var systemCommonDB = new(database.DatabaseImpl)
+	var systemCommonDB = database.NewDatabase()
 
 	// instanciate handlers
-	var taskHandler = handlers.BuildTaskHandler(systemCommonDB)
-	var helloExample = new(handlers.HelloExampleHandlerImpl)
+	taskHandler := handlers.BuildTaskHandler(systemCommonDB)
+	helloExample := new(handlers.HelloExampleHandlerImpl)
 
 	server := router.BuildRouter(serverConfs, taskHandler, helloExample)
-	server.Run("0.0.0.0:3000")
+	err := server.Run("0.0.0.0:3000")
+	if err != nil {
+		fmt.Println("error at strting server\n", err)
+	}
 }

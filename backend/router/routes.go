@@ -1,7 +1,7 @@
 package router
 
 import (
-	"todo-list/backend/handlers"
+	"todo-list-study/backend/handlers"
 
 	"github.com/gin-gonic/gin"
 )

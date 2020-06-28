@@ -1,7 +1,7 @@
 package database
 
 import (
-	"todo-list/backend/models"
+	"todo-list-study/backend/models"
 )
 
 type Database interface {
@@ -11,6 +11,10 @@ type Database interface {
 
 type DatabaseImpl struct {
 	Data []models.Task
+}
+
+func NewDatabase() *DatabaseImpl {
+	return &DatabaseImpl{}
 }
 
 func (d *DatabaseImpl) AddTask(task models.Task) []models.Task {

@@ -2,15 +2,15 @@ package handlers_test
 
 import (
 	"testing"
-	"todo-list/backend/database"
-	"todo-list/backend/models"
+
+	"todo-list-study/backend/database"
+	"todo-list-study/backend/models"
 
 	"github.com/go-playground/assert/v2"
 )
 
 func TestCreateTask(t *testing.T) {
-	var db database.Database
-	db = new(database.DatabaseImpl)
+	db := database.DatabaseImpl{}
 
 	task1 := models.Task{
 		Title: "test title",

@@ -3,8 +3,9 @@ package handlers
 import (
 	"net/http"
 	"time"
-	"todo-list/backend/database"
-	"todo-list/backend/models"
+
+	"todo-list-study/backend/database"
+	"todo-list-study/backend/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,12 +14,6 @@ import (
 type TaskHandler interface {
 	CreateTask(c *gin.Context)
 	ListAllTasks(c *gin.Context)
-}
-
-// responseBody define default response body
-type responseBody struct {
-	status string
-	data   interface{} // FIXME: AVOID USE interface{}
 }
 
 // TaskHandlerImpl responsable for interface methods implementation
@@ -38,10 +33,13 @@ func BuildTaskHandler(db database.Database) *TaskHandlerImpl {
 func (h *TaskHandlerImpl) CreateTask(c *gin.Context) {
 	var task models.Task
 
-	c.BindJSON(&task)
+	bindErr := c.BindJSON(&task)
+	if bindErr != nil {
+		c.AbortWithError(http.StatusUnprocessableEntity, bindErr)
+	}
+
 	createdAt := time.Now()
 	task.CreatedAt = &createdAt
-
 	h.database.AddTask(task)
 
 	c.JSON(http.StatusCreated, gin.H{
