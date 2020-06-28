@@ -1,4 +1,5 @@
-![go](https://todo-list-study/workflows/Go/badge.svg?branch=master)
+![go-backend](https://github.com/araujorafael/todo-list-study/workflows/Go/badge.svg?branch=master)
+
 ![https://github.com/syl20bnr/spacemacs](https://cdn.rawgit.com/syl20bnr/spacemacs/develop/assets/spacemacs-badge.svg)
 
 # todo-list-study
