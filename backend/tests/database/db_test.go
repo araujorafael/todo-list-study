@@ -24,4 +24,25 @@ func TestCreateTask(t *testing.T) {
 	resp := db.AddTask(task1)
 
 	assert.Equal(t, 2, len(resp))
+	assert.Equal(t, uint32(2), db.Data[1].ID)
+}
+
+func TestGetTask(t *testing.T) {
+	db := database.DatabaseImpl{
+		Data: []models.Task{
+			{
+				ID:    1,
+				Title: "test title",
+			},
+			{
+				ID:    2,
+				Title: "test title 2",
+			},
+		},
+	}
+
+	resp, err := db.GetTask(2)
+
+	assert.Equal(t, uint32(2), resp.ID)
+	assert.Equal(t, nil, err)
 }
