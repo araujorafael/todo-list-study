@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 	"time"
-
 	"todo-list-study/backend/database"
 	"todo-list-study/backend/models"
 
@@ -14,6 +14,7 @@ import (
 type TaskHandler interface {
 	CreateTask(c *gin.Context)
 	ListAllTasks(c *gin.Context)
+	FindTask(c *gin.Context)
 }
 
 // TaskHandlerImpl responsable for interface methods implementation
@@ -35,7 +36,9 @@ func (h *TaskHandlerImpl) CreateTask(c *gin.Context) {
 
 	bindErr := c.BindJSON(&task)
 	if bindErr != nil {
-		c.AbortWithError(http.StatusUnprocessableEntity, bindErr)
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error": "Invalid Data",
+		})
 	}
 
 	createdAt := time.Now()
@@ -52,5 +55,28 @@ func (h *TaskHandlerImpl) CreateTask(c *gin.Context) {
 func (h *TaskHandlerImpl) ListAllTasks(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"data": h.database.ListTasks(),
+	})
+}
+
+// FindTask locates and return chosen task
+func (h *TaskHandlerImpl) FindTask(c *gin.Context) {
+	taskID, err := strconv.ParseUint(c.Param("taskID"), 10, 32)
+
+	if err != nil || c.Param("taskID") == "" {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error": "No ID given",
+		})
+	}
+
+	task, err := h.database.FindTask(uint32(taskID))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"taskID": taskID,
+			"error":  "Could not find task with given id",
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": task,
 	})
 }

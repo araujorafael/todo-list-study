@@ -7,7 +7,6 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
-
 	"todo-list-study/backend/database"
 	"todo-list-study/backend/handlers"
 	"todo-list-study/backend/models"
@@ -20,6 +19,7 @@ import (
 type responseJson struct {
 	Status string      `json:"status"`
 	Data   models.Task `json:"data"`
+	Err    error       `json:"error"`
 }
 
 type responseListJson struct {
@@ -50,7 +50,7 @@ func NewCustomTestError(data interface{}, err error) CustomInternalTestError {
 func TestCreateTask(t *testing.T) {
 	var serverConfs = gin.Default()
 
-	db := new(database.DatabaseImpl)
+	db := database.NewDatabase()
 	var taskHandler = handlers.BuildTaskHandler(db)
 	var helloExample = new(handlers.HelloExampleHandlerImpl)
 
@@ -107,4 +107,35 @@ func TestListAllTasks(t *testing.T) {
 	assert.Equal(t, 200, w.Code)
 	assert.Equal(t, 2, len(resp.Data))
 	assert.Equal(t, dbMock, resp.Data)
+}
+
+func TestFindTask(t *testing.T) {
+	var serverConfs = gin.Default()
+
+	dbMock := []models.Task{
+		{ID: 1, Title: "Title task 1"},
+		{ID: 2, Title: "Title task 2"},
+	}
+	db := database.DatabaseImpl{
+		Data: dbMock,
+	}
+
+	var taskHandler = handlers.BuildTaskHandler(&db)
+	var helloExample = new(handlers.HelloExampleHandlerImpl)
+
+	router := router.BuildRouter(serverConfs, taskHandler, helloExample)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/tasks/2", nil)
+	router.ServeHTTP(w, req)
+
+	var resp responseJson
+	errJson := json.Unmarshal(w.Body.Bytes(), &resp)
+	if errJson != nil {
+		err := NewCustomTestError(w.Body.String(), errJson)
+		t.Errorf("Could not parse body response\n %s", err.Error())
+	}
+
+	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, uint32(2), resp.Data.ID)
 }

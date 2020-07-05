@@ -14,6 +14,6 @@ func BuildRouter(server *gin.Engine,
 	server.GET("/ping", helloExampleHandler.Ping)
 	server.POST("/task", taskHandler.CreateTask)
 	server.GET("/tasks", taskHandler.ListAllTasks)
-
+	server.GET("/tasks/:taskID", taskHandler.FindTask)
 	return server
 }
