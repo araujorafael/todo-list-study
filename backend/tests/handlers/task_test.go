@@ -59,7 +59,7 @@ func TestCreateTask(t *testing.T) {
 	payload := strings.NewReader(`{"message": "test", "title": "title test"}`)
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "/task", payload)
+	req, _ := http.NewRequest("POST", "/tasks", payload)
 	router.ServeHTTP(w, req)
 
 	resp := responseJson{}
@@ -139,3 +139,5 @@ func TestFindTask(t *testing.T) {
 	assert.Equal(t, 200, w.Code)
 	assert.Equal(t, uint32(2), resp.Data.ID)
 }
+
+// TODO: Add Delete endpoint

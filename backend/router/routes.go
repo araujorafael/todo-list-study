@@ -12,8 +12,13 @@ func BuildRouter(server *gin.Engine,
 	helloExampleHandler handlers.HelloExampleHandler) *gin.Engine {
 
 	server.GET("/ping", helloExampleHandler.Ping)
-	server.POST("/task", taskHandler.CreateTask)
-	server.GET("/tasks", taskHandler.ListAllTasks)
-	server.GET("/tasks/:taskID", taskHandler.FindTask)
+
+	tasksRouter := server.Group("/tasks")
+	{
+		tasksRouter.POST("", taskHandler.CreateTask)
+		tasksRouter.GET("", taskHandler.ListAllTasks)
+		tasksRouter.GET("/:taskID", taskHandler.FindTask)
+	}
+
 	return server
 }
