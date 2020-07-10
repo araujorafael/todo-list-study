@@ -10,11 +10,11 @@ Just a simple todo-list
 
 #### Backend
 
-- [x] In memory Database 
-- [x] Task Creation endpoint
-- [x] Task Deletion Endpoint
-- [x] Task Get
-- [x] Task list get endpoint 
+- [x] ~~In memory Database~~
+- [x] ~~Task Creation endpoint~~
+- [x] ~~Task Deletion Endpoint~~ 
+- [x] ~~Task Get~~
+- [x] ~~Task list get endpoint~~ 
 
 #### Frontend
 
