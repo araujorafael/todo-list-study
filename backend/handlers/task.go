@@ -15,6 +15,7 @@ type TaskHandler interface {
 	CreateTask(c *gin.Context)
 	ListAllTasks(c *gin.Context)
 	FindTask(c *gin.Context)
+	DeleteTask(c *gin.Context)
 }
 
 // TaskHandlerImpl responsable for interface methods implementation
@@ -78,5 +79,28 @@ func (h *TaskHandlerImpl) FindTask(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"data": task,
+	})
+}
+
+// DeleteTask deletes a single task
+func (h *TaskHandlerImpl) DeleteTask(c *gin.Context) {
+	taskID, jsonErr := strconv.ParseUint(c.Param("taskID"), 10, 64)
+
+	if jsonErr != nil || c.Param("taskID") == "" {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error": "No ID given",
+		})
+	}
+
+	delErr := h.database.DeleteTask(uint32(taskID))
+	if delErr != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"taskID": taskID,
+			"error":  "Could not find task with given id",
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": models.Task{ID: uint32(taskID)},
 	})
 }

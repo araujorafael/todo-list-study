@@ -9,6 +9,7 @@ type Database interface {
 	AddTask(task models.Task) []models.Task
 	ListTasks() []models.Task
 	FindTask(uint32) (models.Task, error)
+	DeleteTask(taskID uint32) error
 }
 
 // DatabaseImpl Databse "tables" implementation
@@ -26,6 +27,35 @@ func (d *DatabaseImpl) AddTask(task models.Task) []models.Task {
 	task.ID = uint32(len(d.Data))
 	d.Data = append(d.Data, task)
 	return d.Data
+}
+
+// DeleteTask purges a task frm array
+func (d *DatabaseImpl) DeleteTask(taskID uint32) error {
+	var elementIndex *int
+
+	for i, task := range d.Data {
+		if task.ID == taskID {
+			elementIndex = &i
+			break
+		}
+	}
+
+	if elementIndex == nil {
+		return errors.New("Element does not exist")
+	}
+
+	switch *elementIndex {
+	case 0:
+		d.Data = d.Data[1:]
+	case len(d.Data) - 1:
+		d.Data = d.Data[:*elementIndex]
+	default:
+		beginning := d.Data[:*elementIndex]
+		end := d.Data[*elementIndex+1:]
+		d.Data = append(beginning, end...)
+	}
+
+	return nil
 }
 
 // ListTasks return all tasks saved on database

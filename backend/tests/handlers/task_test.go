@@ -140,4 +140,34 @@ func TestFindTask(t *testing.T) {
 	assert.Equal(t, uint32(2), resp.Data.ID)
 }
 
-// TODO: Add Delete endpoint
+func TestDeleteTask(t *testing.T) {
+	var serverConfs = gin.Default()
+
+	dbMock := []models.Task{
+		{ID: 1, Title: "Title task 1"},
+		{ID: 2, Title: "Title task 2"},
+	}
+	db := database.DatabaseImpl{
+		Data: dbMock,
+	}
+
+	var taskHandler = handlers.BuildTaskHandler(&db)
+	var helloExample = new(handlers.HelloExampleHandlerImpl)
+
+	router := router.BuildRouter(serverConfs, taskHandler, helloExample)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("DELETE", "/tasks/2", nil)
+	router.ServeHTTP(w, req)
+
+	var resp responseJson
+	errJson := json.Unmarshal(w.Body.Bytes(), &resp)
+	if errJson != nil {
+		err := NewCustomTestError(w.Body.String(), errJson)
+		t.Errorf("Could not parse body response\n %s", err.Error())
+	}
+
+	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, uint32(2), resp.Data.ID)
+	assert.Equal(t, len(db.Data), 1)
+}

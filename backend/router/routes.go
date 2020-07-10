@@ -18,6 +18,7 @@ func BuildRouter(server *gin.Engine,
 		tasksRouter.POST("", taskHandler.CreateTask)
 		tasksRouter.GET("", taskHandler.ListAllTasks)
 		tasksRouter.GET("/:taskID", taskHandler.FindTask)
+		tasksRouter.DELETE("/:taskID", taskHandler.DeleteTask)
 	}
 
 	return server

@@ -12,8 +12,8 @@ Just a simple todo-list
 
 - [x] In memory Database 
 - [x] Task Creation endpoint
-- [ ] Task Deletion Endpoint
-- [ ] Task Get
+- [x] Task Deletion Endpoint
+- [x] Task Get
 - [x] Task list get endpoint 
 
 #### Frontend
